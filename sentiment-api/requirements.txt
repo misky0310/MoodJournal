@@ -1,0 +1,6 @@
+flask
+uvicorn
+transformers
+torch
+scipy
+nltk
