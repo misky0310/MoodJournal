@@ -4,6 +4,8 @@ import { supabase } from "../supabaseClient";
 import JournalForm from "../components/JournalForm";
 import PastEntries from "../components/PastEntries";
 import { AnimatePresence, motion } from "framer-motion";
+import Visualisation from "../components/Visualisation";
+import Insights from "../components/Insights";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -26,6 +28,7 @@ const Dashboard = () => {
   const navItems = [
     { key: "journal", icon: "📝", label: "Journal Entry" },
     { key: "visualisation", icon: "📊", label: "Visualisation" },
+    { key: "insights", icon: "🔍", label: "Insights" },
     { key: "past", icon: "📂", label: "Past Entries" },
     { key: "profile", icon: "👤", label: "Profile" },
   ];
@@ -111,9 +114,20 @@ const Dashboard = () => {
               <h2 className="text-2xl font-semibold mb-4">
                 Mood Visualisation
               </h2>
-              <p className="text-gray-600">
-                Coming soon: sentiment graphs and mood charts.
-              </p>
+              <Visualisation user={user} />
+            </motion.div>
+          )}
+
+          {section === "insights" && (
+            <motion.div
+              key="insights"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              className="bg-white p-6 rounded-lg shadow"
+            >
+              <Insights user={user} />
             </motion.div>
           )}
 

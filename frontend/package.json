@@ -12,6 +12,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.50.0",
     "axios": "^1.10.0",
+    "dotenv": "^16.5.0",
     "framer-motion": "^12.18.1",
     "lucide-react": "^0.518.0",
     "react": "^19.1.0",
@@ -19,7 +20,8 @@
     "react-router-dom": "^7.6.2",
     "react-spinners": "^0.17.0",
     "react-toastify": "^11.0.5",
-    "recharts": "^2.15.3"
+    "recharts": "^2.15.3",
+    "swiper": "^11.2.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

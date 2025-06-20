@@ -31,6 +31,14 @@ const JournalForm = ({ user }) => {
       const sentimentLabel = sentimentData.overall.label;
       const sentimentScores = sentimentData.overall.average_scores;
 
+      const response = await axios.post("http://127.0.0.1:8001/generate-insight",{
+        text: content
+      })
+
+      const summary  = response.data.summary || "No insight generated";
+      const suggestion = response.data.suggestion || "No suggestion provided";
+      const affirmation = response.data.affirmation || "No affirmation provided";
+
       const { error } = await supabase.from("journal_entries").insert([
         {
           user_id: user.id,
@@ -38,6 +46,9 @@ const JournalForm = ({ user }) => {
           created_at: new Date().toISOString(),
           sentiment_label: sentimentLabel,
           sentiment_scores: sentimentScores,
+          summary,
+          suggestion,
+          affirmation,
         },
       ]);
 
