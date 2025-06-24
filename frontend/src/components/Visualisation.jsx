@@ -1,18 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import {
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
+import ReactECharts from "echarts-for-react";
 
 const COLORS = {
   positive: "#34D399",
@@ -76,9 +64,7 @@ const Visualisation = ({ user }) => {
     const fetchSentimentData = async () => {
       const { data, error } = await supabase
         .from("journal_entries")
-        .select(
-          "created_at, sentiment_scores, sentiment_label, affirmation, suggestion, summary"
-        )
+        .select("created_at, sentiment_scores, sentiment_label, affirmation, suggestion, summary")
         .eq("user_id", user.id)
         .order("created_at", { ascending: true });
 
@@ -113,6 +99,117 @@ const Visualisation = ({ user }) => {
       ? dailyData
       : aggregateBy(entries, tab === "weekly" ? "weekly" : "monthly");
 
+  const getLineOption = () => ({
+    tooltip: {
+      trigger: "axis",
+    },
+    legend: {
+      top: 0,
+      textStyle: {
+        color: "#ffffff",
+      },
+      inactiveColor: "#999999",
+      data: ["positive", "neutral", "negative"],
+    },
+    grid: {
+      top: 30,
+      left: 40,
+      right: 20,
+      bottom: 80,
+    },
+    xAxis: {
+      type: "category",
+      boundaryGap: false,
+      data: lineData.map((d) => (tab === "daily" ? d.date : d.period)),
+      axisLabel: { color: "#aaa" },
+      axisLine: { lineStyle: { color: "#888" } },
+    },
+    yAxis: {
+      type: "value",
+      min: 0,
+      max: 1,
+      axisLabel: { color: "#aaa" },
+      axisLine: { lineStyle: { color: "#888" } },
+    },
+    dataZoom: [
+      {
+        type: "slider",
+        start: 0,
+        end: 100,
+        bottom: 10,
+      },
+    ],
+    series: [
+      {
+        name: "positive",
+        type: "line",
+        smooth: true,
+        data: lineData.map((d) => d.positive),
+        itemStyle: { color: COLORS.positive },
+      },
+      {
+        name: "neutral",
+        type: "line",
+        smooth: true,
+        data: lineData.map((d) => d.neutral),
+        itemStyle: { color: COLORS.neutral },
+      },
+      {
+        name: "negative",
+        type: "line",
+        smooth: true,
+        data: lineData.map((d) => d.negative),
+        itemStyle: { color: COLORS.negative },
+      },
+    ],
+  });
+
+  const getPieOption = () => ({
+    tooltip: {
+      trigger: "item",
+      formatter: "{b}: {c} entries ({d}%)",
+    },
+    legend: {
+      orient: "horizontal",
+      bottom: 0,
+      textStyle: {
+        color: "#ffffff",
+      },
+    },
+    series: [
+      {
+        name: "Mood",
+        type: "pie",
+        radius: ["40%","80%"],
+        avoidLabelOverlap: false,
+        label: {
+          show: true,
+          position: "outside",
+          formatter: "{b}: {d}%",
+          color: "#ddd",
+        },
+        labelLine: {
+          show: true,
+          lineStyle: {
+            color: "#888",
+          },
+        },
+        data: pieData.map((d) => ({
+          value: d.value,
+          name: d.name.charAt(0).toUpperCase() + d.name.slice(1),
+          itemStyle: { color: COLORS[d.name] },
+        })),
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: "rgba(0, 0, 0, 0.5)",
+          },
+        },
+      },
+    ],
+  });
+  
   return (
     <div className="space-y-10">
       {/* Tabs */}
@@ -134,56 +231,30 @@ const Visualisation = ({ user }) => {
 
       {/* Line Chart */}
       <div className="bg-background border border-border p-6 rounded-lg shadow">
-        <h3 className="text-xl font-bold mb-4 text-primary">
+        <h3 className="text-xl font-bold mb-4 text-primary flex items-center gap-2">
           Mood Trend ({tab.charAt(0).toUpperCase() + tab.slice(1)})
         </h3>
+
         {lineData.length === 0 ? (
           <p className="text-text/70">No data available.</p>
         ) : (
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={lineData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#9993" />
-              <XAxis
-                dataKey={tab === "daily" ? "date" : "period"}
-                stroke="#aaa"
-              />
-              <YAxis domain={[0, 1]} stroke="#aaa" />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="positive" stroke={COLORS.positive} />
-              <Line type="monotone" dataKey="neutral" stroke={COLORS.neutral} />
-              <Line type="monotone" dataKey="negative" stroke={COLORS.negative} />
-            </LineChart>
-          </ResponsiveContainer>
+          <>
+            <ReactECharts option={getLineOption()} style={{ height: 400 }} />
+            <p className="text-sm text-gray-400 text-center mt-2">
+              Drag the slider above to explore specific date ranges
+            </p>
+          </>
         )}
       </div>
 
       {/* Pie Chart */}
       <div className="bg-background border border-border p-6 rounded-lg shadow">
-        <h3 className="text-xl font-bold mb-4 text-primary">
-          Overall Mood Distribution
-        </h3>
+        <h3 className="text-xl font-bold mb-4 text-primary">Overall Mood Distribution</h3>
+
         {entries.length === 0 ? (
           <p className="text-text/70">No entries to display.</p>
         ) : (
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={pieData}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={100}
-                label
-              >
-                {pieData.map((entry) => (
-                  <Cell key={entry.name} fill={COLORS[entry.name]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
+          <ReactECharts option={getPieOption()} style={{ height: 400 }} />
         )}
       </div>
     </div>
