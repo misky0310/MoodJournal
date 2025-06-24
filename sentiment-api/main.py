@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS  # 👈 Add this
+from flask_cors import CORS 
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from scipy.special import softmax
 import nltk
+nltk.download("punkt")
+
 from nltk.tokenize import sent_tokenize
 
 app = Flask(__name__)
