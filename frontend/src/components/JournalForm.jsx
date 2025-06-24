@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { supabase } from "../supabaseClient";
-import { toast } from "react-toastify";
+import { toast,ToastContainer } from "react-toastify";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
 
@@ -98,6 +98,7 @@ const JournalForm = ({ user }) => {
           🚀 Submit Journal
         </button>
       </div>
+      <ToastContainer/>
     </form>
   );
 };

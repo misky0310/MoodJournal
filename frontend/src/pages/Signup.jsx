@@ -1,7 +1,9 @@
-import { useState } from 'react';
-import { supabase } from '../supabaseClient';
-import { useNavigate, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { useState } from "react";
+import { supabase } from "../supabaseClient";
+import { useNavigate, Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const fadeIn = {
   hidden: { opacity: 0, y: 30 },
@@ -16,16 +18,19 @@ const fadeIn = {
 };
 
 const Signup = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   const handleSignup = async (e) => {
     e.preventDefault();
     const { error } = await supabase.auth.signUp({ email, password });
     if (error) {
-      setMessage(error.message);
+      toast.error(error.message, {
+        position: "top-right",
+        autoClose: 5000,
+      });
     } else {
       navigate('/dashboard');
     }
@@ -47,6 +52,18 @@ const Signup = () => {
         >
           Create Your Account
         </motion.h2>
+
+        {message && (
+          <motion.div
+            className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-400 text-red-300 text-sm font-medium text-center"
+            variants={fadeIn}
+            initial="hidden"
+            animate="visible"
+            custom={0.5}
+          >
+            {message}
+          </motion.div>
+        )}
 
         <form onSubmit={handleSignup} className="space-y-5">
           <motion.input
@@ -85,32 +102,21 @@ const Signup = () => {
             Sign Up
           </motion.button>
 
-          {message && (
-            <motion.p
-              className="text-red-400 text-sm text-center"
-              variants={fadeIn}
-              initial="hidden"
-              animate="visible"
-              custom={4}
-            >
-              {message}
-            </motion.p>
-          )}
-
           <motion.p
             className="text-sm text-center mt-4 text-muted"
             variants={fadeIn}
             initial="hidden"
             animate="visible"
-            custom={5}
+            custom={4}
           >
-            Already have an account?{' '}
+            Already have an account?{" "}
             <Link to="/login" className="text-primary hover:underline">
               Login here
             </Link>
           </motion.p>
         </form>
       </motion.div>
+      <ToastContainer/>
     </div>
   );
 };

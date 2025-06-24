@@ -15,7 +15,6 @@ const PastEntries = ({ user }) => {
   useEffect(() => {
     const fetchEntries = async () => {
       setLoading(true);
-
       const { data, error } = await supabase
         .from("journal_entries")
         .select("*")
@@ -37,12 +36,15 @@ const PastEntries = ({ user }) => {
     });
   };
 
-  const formatDate = (iso) => {
-    const date = new Date(iso);
-    return date.toLocaleString("en-IN", {
-      dateStyle: "medium",
-      timeStyle: "short",
+  const formatDate = (isoString) => {
+    const utcDate = new Date(isoString + 'Z'); // force UTC parsing
+    const localIST =  utcDate.toLocaleString('en-IN', {
+      timeZone: 'Asia/Kolkata',
+      dateStyle: 'medium',
+      timeStyle: 'short',
     });
+    return localIST;
+
   };
 
   const filteredEntries = selectedDate
@@ -51,7 +53,7 @@ const PastEntries = ({ user }) => {
 
   return (
     <div className="space-y-6 text-white">
-      {/* Filter by Date */}
+      {/* Date Filter */}
       <div className="flex items-center justify-between gap-4 flex-wrap mb-4">
         <h2 className="text-2xl font-bold text-accent">📂 Past Journal Entries</h2>
         <input
@@ -62,7 +64,7 @@ const PastEntries = ({ user }) => {
         />
       </div>
 
-      {/* Loading Spinner */}
+      {/* Loading */}
       {loading ? (
         <div className="flex justify-center items-center h-64">
           <ClipLoader size={48} color="#a78bfa" />
@@ -71,11 +73,12 @@ const PastEntries = ({ user }) => {
         <p className="text-white/70">No journal entries found.</p>
       ) : (
         filteredEntries.map((entry) => {
+          const content = entry.content || "";
           const isExpanded = expandedIds.has(entry.id);
           const truncated =
-            entry.content.length > CHARACTER_LIMIT
-              ? entry.content.slice(0, CHARACTER_LIMIT) + "..."
-              : entry.content;
+            content.length > CHARACTER_LIMIT
+              ? content.slice(0, CHARACTER_LIMIT) + "..."
+              : content;
 
           return (
             <motion.div
@@ -88,7 +91,7 @@ const PastEntries = ({ user }) => {
             >
               <div className="flex justify-between items-center mb-2">
                 <p className="text-sm text-white/60">{formatDate(entry.created_at)}</p>
-                {entry.content.length > CHARACTER_LIMIT && (
+                {content.length > CHARACTER_LIMIT && (
                   <button
                     onClick={() => toggleExpand(entry.id)}
                     className="text-white/60 hover:text-accent transition"
@@ -101,14 +104,14 @@ const PastEntries = ({ user }) => {
 
               <AnimatePresence initial={false}>
                 <motion.p
-                  key={isExpanded ? "full" : "truncated"}
+                  key={isExpanded ? "full-" + entry.id : "trunc-" + entry.id}
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
                   transition={{ duration: 0.2 }}
                   className="text-white whitespace-pre-line text-sm"
                 >
-                  {isExpanded ? entry.content : truncated}
+                  {isExpanded ? content : truncated}
                 </motion.p>
               </AnimatePresence>
             </motion.div>

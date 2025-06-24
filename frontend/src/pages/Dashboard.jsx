@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import JournalForm from "../components/JournalForm";
 import PastEntries from "../components/PastEntries";
-import { AnimatePresence, motion } from "framer-motion";
 import Visualisation from "../components/Visualisation";
 import Insights from "../components/Insights";
+import ProfileSettings from "../components/ProfileSettings";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   PanelLeft,
   PanelRightClose,
@@ -22,6 +23,7 @@ const Dashboard = () => {
   const [section, setSection] = useState("journal");
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
+  const chartRef = useRef(null); // 👈 For chart export
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -37,11 +39,7 @@ const Dashboard = () => {
 
   const navItems = [
     { key: "journal", icon: <NotebookPen size={18} />, label: "Journal Entry" },
-    {
-      key: "visualisation",
-      icon: <LineChart size={18} />,
-      label: "Visualisation",
-    },
+    { key: "visualisation", icon: <LineChart size={18} />, label: "Visualisation" },
     { key: "insights", icon: <Search size={18} />, label: "Insights" },
     { key: "past", icon: <FolderOpen size={18} />, label: "Past Entries" },
     { key: "profile", icon: <User size={18} />, label: "Profile" },
@@ -67,11 +65,7 @@ const Dashboard = () => {
             className="text-accent hover:text-white transition"
             title="Toggle Sidebar"
           >
-            {collapsed ? (
-              <PanelLeft size={22} />
-            ) : (
-              <PanelRightClose size={22} />
-            )}
+            {collapsed ? <PanelLeft size={22} /> : <PanelRightClose size={22} />}
           </button>
         </div>
 
@@ -143,7 +137,7 @@ const Dashboard = () => {
               <h2 className="text-2xl font-semibold mb-4 text-accent">
                 Mood Visualisation
               </h2>
-              <Visualisation user={user} />
+              <Visualisation user={user} chartRef={chartRef} />
             </motion.div>
           )}
 
@@ -169,9 +163,6 @@ const Dashboard = () => {
               transition={{ duration: 0.3 }}
               className="bg-white/5 p-6 rounded-lg shadow border border-white/10"
             >
-              {/* <h2 className="text-2xl font-semibold mb-4 text-accent">
-                Past Journal Entries
-              </h2> */}
               <PastEntries user={user} />
             </motion.div>
           )}
@@ -185,13 +176,7 @@ const Dashboard = () => {
               transition={{ duration: 0.3 }}
               className="bg-white/5 p-6 rounded-lg shadow border border-white/10"
             >
-              <h2 className="text-2xl font-semibold mb-4 text-accent">
-                Your Profile
-              </h2>
-              <p>
-                <strong>Email:</strong> {user?.email}
-              </p>
-              <p className="text-gray-300 mt-2">More settings coming soon.</p>
+              <ProfileSettings user={user} chartRef={chartRef} />
             </motion.div>
           )}
         </AnimatePresence>

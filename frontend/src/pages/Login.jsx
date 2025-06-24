@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { toast, ToastContainer } from 'react-toastify';
 
 const fadeIn = {
   hidden: { opacity: 0, y: 30 },
@@ -25,7 +26,10 @@ const Login = () => {
     e.preventDefault();
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
-      setMessage(error.message);
+      toast.error(error.message, {
+        position: 'top-right',
+        autoClose: 5000,
+      })
     } else {
       navigate('/dashboard');
     }
@@ -84,19 +88,6 @@ const Login = () => {
           >
             Login
           </motion.button>
-
-          {message && (
-            <motion.p
-              className="text-red-400 text-sm text-center"
-              variants={fadeIn}
-              initial="hidden"
-              animate="visible"
-              custom={4}
-            >
-              {message}
-            </motion.p>
-          )}
-
           <motion.p
             className="text-sm text-center mt-4 text-muted"
             variants={fadeIn}
@@ -111,6 +102,7 @@ const Login = () => {
           </motion.p>
         </form>
       </motion.div>
+      <ToastContainer/>
     </div>
   );
 };

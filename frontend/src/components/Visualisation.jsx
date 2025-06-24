@@ -8,13 +8,17 @@ const COLORS = {
   negative: "#F87171",
 };
 
-const getFormattedDateTime = (isoString) =>
-  new Date(isoString).toLocaleString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+
+  const getFormattedDateTime = (isoString) => {
+    const utcDate = new Date(isoString + 'Z'); // force UTC parsing
+    const localIST =  utcDate.toLocaleString('en-IN', {
+      timeZone: 'Asia/Kolkata',
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    });
+    return localIST;
+
+  };
 
 const aggregateBy = (entries, type) => {
   const grouped = {};

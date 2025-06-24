@@ -1,5 +1,5 @@
 const InsightCard = ({ entry }) => {
-  const formattedDate = new Date(entry.created_at).toLocaleString("en-IN", {
+  const formattedDate = new Date(entry.created_at+'Z').toLocaleString("en-IN", {
     day: "2-digit",
     month: "short",
     year: "numeric",
