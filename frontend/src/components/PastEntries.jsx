@@ -10,6 +10,7 @@ const PastEntries = ({ user }) => {
   const [entries, setEntries] = useState([]);
   const [expandedIds, setExpandedIds] = useState(new Set());
   const [loading, setLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState("");
 
   useEffect(() => {
     const fetchEntries = async () => {
@@ -44,20 +45,32 @@ const PastEntries = ({ user }) => {
     });
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <ClipLoader size={48} color="#3b82f6" />
-      </div>
-    );
-  }
+  const filteredEntries = selectedDate
+    ? entries.filter((e) => e.created_at.startsWith(selectedDate))
+    : entries;
 
   return (
-    <div className="space-y-4">
-      {entries.length === 0 ? (
-        <p className="text-gray-500 ">No entries yet.</p>
+    <div className="space-y-6 text-white">
+      {/* Filter by Date */}
+      <div className="flex items-center justify-between gap-4 flex-wrap mb-4">
+        <h2 className="text-2xl font-bold text-accent">📂 Past Journal Entries</h2>
+        <input
+          type="date"
+          className="bg-white/10 text-white border border-white/20 px-3 py-1 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-accent"
+          value={selectedDate}
+          onChange={(e) => setSelectedDate(e.target.value)}
+        />
+      </div>
+
+      {/* Loading Spinner */}
+      {loading ? (
+        <div className="flex justify-center items-center h-64">
+          <ClipLoader size={48} color="#a78bfa" />
+        </div>
+      ) : filteredEntries.length === 0 ? (
+        <p className="text-white/70">No journal entries found.</p>
       ) : (
-        entries.map((entry) => {
+        filteredEntries.map((entry) => {
           const isExpanded = expandedIds.has(entry.id);
           const truncated =
             entry.content.length > CHARACTER_LIMIT
@@ -71,23 +84,17 @@ const PastEntries = ({ user }) => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               layout
-              className="bg-white  border border-gray-200  rounded-lg p-5 shadow-sm"
+              className="bg-white/5 border border-white/10 rounded-lg p-5 shadow hover:shadow-lg transition"
             >
               <div className="flex justify-between items-center mb-2">
-                <p className="text-sm text-gray-500 ">
-                  {formatDate(entry.created_at)}
-                </p>
+                <p className="text-sm text-white/60">{formatDate(entry.created_at)}</p>
                 {entry.content.length > CHARACTER_LIMIT && (
                   <button
                     onClick={() => toggleExpand(entry.id)}
-                    className="text-gray-600  hover:text-blue-500 transition"
+                    className="text-white/60 hover:text-accent transition"
                     title={isExpanded ? "Collapse" : "Expand"}
                   >
-                    {isExpanded ? (
-                      <ChevronUp size={18} />
-                    ) : (
-                      <ChevronDown size={18} />
-                    )}
+                    {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                   </button>
                 )}
               </div>
@@ -99,7 +106,7 @@ const PastEntries = ({ user }) => {
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="text-gray-800  whitespace-pre-line"
+                  className="text-white whitespace-pre-line text-sm"
                 >
                   {isExpanded ? entry.content : truncated}
                 </motion.p>

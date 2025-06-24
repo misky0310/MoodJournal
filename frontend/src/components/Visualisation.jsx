@@ -14,22 +14,19 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-
-
 const COLORS = {
   positive: "#34D399",
   neutral: "#FBBF24",
   negative: "#F87171",
 };
 
-const getFormattedDateTime = (isoString) => {
-  return new Date(isoString).toLocaleString("en-IN", {
+const getFormattedDateTime = (isoString) =>
+  new Date(isoString).toLocaleString("en-IN", {
     day: "2-digit",
     month: "short",
     hour: "2-digit",
     minute: "2-digit",
   });
-};
 
 const aggregateBy = (entries, type) => {
   const grouped = {};
@@ -39,7 +36,7 @@ const aggregateBy = (entries, type) => {
     let key;
 
     if (type === "daily") {
-      key = date.toISOString().slice(0, 10); // YYYY-MM-DD
+      key = date.toISOString().slice(0, 10);
     } else if (type === "weekly") {
       const year = date.getFullYear();
       const week = Math.ceil(
@@ -50,10 +47,7 @@ const aggregateBy = (entries, type) => {
       );
       key = `${year}-W${week}`;
     } else if (type === "monthly") {
-      key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
-        2,
-        "0"
-      )}`;
+      key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
     }
 
     if (!grouped[key]) {
@@ -82,7 +76,9 @@ const Visualisation = ({ user }) => {
     const fetchSentimentData = async () => {
       const { data, error } = await supabase
         .from("journal_entries")
-        .select("created_at, sentiment_scores, sentiment_label, affirmation, suggestion, summary")
+        .select(
+          "created_at, sentiment_scores, sentiment_label, affirmation, suggestion, summary"
+        )
         .eq("user_id", user.id)
         .order("created_at", { ascending: true });
 
@@ -119,7 +115,7 @@ const Visualisation = ({ user }) => {
 
   return (
     <div className="space-y-10">
-      {/* Tab Buttons */}
+      {/* Tabs */}
       <div className="flex gap-4 mb-4">
         {["daily", "weekly", "monthly"].map((option) => (
           <button
@@ -127,8 +123,8 @@ const Visualisation = ({ user }) => {
             onClick={() => setTab(option)}
             className={`px-4 py-2 rounded-md font-semibold transition ${
               tab === option
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                ? "bg-primary text-background"
+                : "bg-background border border-border text-text hover:bg-primary/20"
             }`}
           >
             {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -137,43 +133,38 @@ const Visualisation = ({ user }) => {
       </div>
 
       {/* Line Chart */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-xl font-semibold mb-4">
+      <div className="bg-background border border-border p-6 rounded-lg shadow">
+        <h3 className="text-xl font-bold mb-4 text-primary">
           Mood Trend ({tab.charAt(0).toUpperCase() + tab.slice(1)})
         </h3>
         {lineData.length === 0 ? (
-          <p className="text-gray-500">No data available.</p>
+          <p className="text-text/70">No data available.</p>
         ) : (
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={lineData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey={tab === "daily" ? "date" : "period"} />
-              <YAxis domain={[0, 1]} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#9993" />
+              <XAxis
+                dataKey={tab === "daily" ? "date" : "period"}
+                stroke="#aaa"
+              />
+              <YAxis domain={[0, 1]} stroke="#aaa" />
               <Tooltip />
               <Legend />
-              <Line
-                type="monotone"
-                dataKey="positive"
-                stroke={COLORS.positive}
-              />
+              <Line type="monotone" dataKey="positive" stroke={COLORS.positive} />
               <Line type="monotone" dataKey="neutral" stroke={COLORS.neutral} />
-              <Line
-                type="monotone"
-                dataKey="negative"
-                stroke={COLORS.negative}
-              />
+              <Line type="monotone" dataKey="negative" stroke={COLORS.negative} />
             </LineChart>
           </ResponsiveContainer>
         )}
       </div>
 
       {/* Pie Chart */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-xl font-semibold mb-4">
+      <div className="bg-background border border-border p-6 rounded-lg shadow">
+        <h3 className="text-xl font-bold mb-4 text-primary">
           Overall Mood Distribution
         </h3>
         {entries.length === 0 ? (
-          <p className="text-gray-500">No entries to display.</p>
+          <p className="text-text/70">No entries to display.</p>
         ) : (
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>

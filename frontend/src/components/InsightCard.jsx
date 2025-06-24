@@ -8,27 +8,27 @@ const InsightCard = ({ entry }) => {
   });
 
   return (
-    <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 w-[100vw] max-w-3xl shadow-md hover:shadow-lg mx-auto">
+    <div className="bg-white/10 border border-white/20 rounded-xl p-6 w-[100vw] max-w-3xl shadow-lg hover:shadow-xl transition mx-auto text-white">
       {/* Timestamp */}
-      <p className="text-sm text-gray-500 mb-3">{formattedDate}</p>
+      <p className="text-sm text-white/60 mb-4">{formattedDate}</p>
 
       <div className="space-y-5 text-sm">
         {/* Affirmation */}
         <div>
-          <h4 className="text-green-700 font-semibold">Affirmation</h4>
-          <p className="italic text-gray-800">"{entry.affirmation}"</p>
+          <h4 className="text-green-400 font-semibold">🌟 Affirmation</h4>
+          <p className="italic text-white/90">"{entry.affirmation}"</p>
         </div>
 
         {/* Suggestion */}
         <div>
-          <h4 className="text-yellow-600 font-semibold">Suggestion</h4>
-          <p className="text-gray-700">{entry.suggestion}</p>
+          <h4 className="text-yellow-400 font-semibold">💡 Suggestion</h4>
+          <p className="text-white/90">{entry.suggestion}</p>
         </div>
 
         {/* Summary */}
         <div>
-          <h4 className="text-blue-600 font-semibold">Summary</h4>
-          <p className="text-gray-700">{entry.summary}</p>
+          <h4 className="text-blue-400 font-semibold">📌 Summary</h4>
+          <p className="text-white/90">{entry.summary}</p>
         </div>
       </div>
     </div>

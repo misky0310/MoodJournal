@@ -1,6 +1,19 @@
 import { useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { useNavigate, Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+
+const fadeIn = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i = 1) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: i * 0.2,
+      duration: 0.6,
+    },
+  }),
+};
 
 const Signup = () => {
   const [email, setEmail] = useState('');
@@ -19,35 +32,85 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 to-blue-200">
-      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-        <h2 className="text-3xl font-bold text-center mb-6">Create Your Account</h2>
-        <form onSubmit={handleSignup} className="space-y-4">
-          <input
+    <div className="min-h-screen flex items-center justify-center bg-background text-text px-4">
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={fadeIn}
+        className="bg-card text-text w-full max-w-md p-8 rounded-xl shadow-xl border border-border"
+      >
+        <motion.h2
+          initial="hidden"
+          animate="visible"
+          variants={fadeIn}
+          className="text-3xl font-bold text-center mb-6 text-primary"
+        >
+          Create Your Account
+        </motion.h2>
+
+        <form onSubmit={handleSignup} className="space-y-5">
+          <motion.input
             type="email"
             placeholder="Email"
-            className="w-full p-3 border border-gray-300 rounded"
+            className="w-full px-4 py-3 bg-background text-text border border-border rounded focus:outline-none focus:ring-2 focus:ring-primary/70"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            variants={fadeIn}
+            initial="hidden"
+            animate="visible"
+            custom={1}
           />
-          <input
+          <motion.input
             type="password"
             placeholder="Password"
-            className="w-full p-3 border border-gray-300 rounded"
+            className="w-full px-4 py-3 bg-background text-text border border-border rounded focus:outline-none focus:ring-2 focus:ring-primary/70"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            variants={fadeIn}
+            initial="hidden"
+            animate="visible"
+            custom={2}
           />
-          <button className="w-full bg-green-600 text-white py-3 rounded hover:bg-green-700 transition">
+
+          <motion.button
+            type="submit"
+            className="w-full py-3 bg-primary text-background font-bold rounded hover:bg-accent transition"
+            variants={fadeIn}
+            initial="hidden"
+            animate="visible"
+            custom={3}
+          >
             Sign Up
-          </button>
-          {message && <p className="text-red-500 text-sm">{message}</p>}
-          <p className="text-sm text-center mt-4">
-            Already have an account? <Link to="/login" className="text-blue-500">Login here</Link>
-          </p>
+          </motion.button>
+
+          {message && (
+            <motion.p
+              className="text-red-400 text-sm text-center"
+              variants={fadeIn}
+              initial="hidden"
+              animate="visible"
+              custom={4}
+            >
+              {message}
+            </motion.p>
+          )}
+
+          <motion.p
+            className="text-sm text-center mt-4 text-muted"
+            variants={fadeIn}
+            initial="hidden"
+            animate="visible"
+            custom={5}
+          >
+            Already have an account?{' '}
+            <Link to="/login" className="text-primary hover:underline">
+              Login here
+            </Link>
+          </motion.p>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 };

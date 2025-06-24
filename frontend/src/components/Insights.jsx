@@ -79,10 +79,10 @@ const Insights = ({ user }) => {
     <div className="space-y-6">
       {/* Header and Date Selector */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-        <h2 className="text-2xl font-bold text-purple-700">🧠 AI-Powered Insights</h2>
+      <h2 className="text-2xl font-bold text-accent">🧠 AI-Powered Insights</h2>
         <input
           type="date"
-          className="border px-3 py-1 rounded-md shadow-sm"
+          className="bg-white/10 text-white border border-white/20 px-3 py-1 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-accent"
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
         />
@@ -96,7 +96,7 @@ const Insights = ({ user }) => {
           {/* Left Button */}
           <button
             onClick={handlePrev}
-            className="absolute left-0 p-2 bg-white border rounded-full shadow disabled:opacity-50"
+            className="absolute hover:cursor-pointer left-0 p-2 bg-white/10 text-white border border-white/20 rounded-full shadow hover:bg-white/20 transition disabled:opacity-30"
             disabled={filtered.length <= 1}
           >
             <ChevronLeft />
@@ -121,7 +121,7 @@ const Insights = ({ user }) => {
           {/* Right Button */}
           <button
             onClick={handleNext}
-            className="absolute right-0 p-2 bg-white border rounded-full shadow disabled:opacity-50"
+            className="absolute hover:cursor-pointer right-0 p-2 bg-white/10 text-white border border-white/20 rounded-full shadow hover:bg-white/20 transition disabled:opacity-30"
             disabled={filtered.length <= 1}
           >
             <ChevronRight />

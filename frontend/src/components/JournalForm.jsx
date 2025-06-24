@@ -31,11 +31,11 @@ const JournalForm = ({ user }) => {
       const sentimentLabel = sentimentData.overall.label;
       const sentimentScores = sentimentData.overall.average_scores;
 
-      const response = await axios.post("http://127.0.0.1:8001/generate-insight",{
-        text: content
-      })
+      const response = await axios.post("http://127.0.0.1:8001/generate-insight", {
+        text: content,
+      });
 
-      const summary  = response.data.summary || "No insight generated";
+      const summary = response.data.summary || "No insight generated";
       const suggestion = response.data.suggestion || "No suggestion provided";
       const affirmation = response.data.affirmation || "No affirmation provided";
 
@@ -54,7 +54,7 @@ const JournalForm = ({ user }) => {
 
       if (error) throw error;
 
-      toast.success("Journal entry submitted successfully!");
+      toast.success("Journal submitted successfully!");
       setContent("");
     } catch (err) {
       console.error(err);
@@ -66,28 +66,38 @@ const JournalForm = ({ user }) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 relative">
+      {/* Loader Overlay */}
       {loading && (
-        <div className="absolute inset-0 bg-white bg-opacity-60 flex items-center justify-center z-10">
-          <ClipLoader color="#3B82F6" size={50} />
+        <div className="absolute inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-10 rounded-lg">
+          <ClipLoader color="#8b5cf6" size={50} />
         </div>
       )}
 
-      <textarea
-        rows="8"
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        placeholder="Let your thoughts flow here..."
-        className="w-full border border-gray-300 p-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-        disabled={loading}
-      />
+      {/* Label */}
+      <div>
+        <label className="text-white font-semibold text-lg block mb-2">
+          ✍️ Today's Reflection
+        </label>
+        <textarea
+          rows="20"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Let your thoughts flow freely..."
+          className="w-full bg-white/10 text-white border border-white/20 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-accent transition resize-none placeholder:text-white/60 disabled:opacity-50"
+          disabled={loading}
+        />
+      </div>
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
-      >
-        Submit Journal
-      </button>
+      {/* Submit Button */}
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          disabled={loading || content.trim().length === 0}
+          className="bg-background text-primary border border-accent font-semibold px-6 py-2 rounded-lg hover:bg-accent hover:text-background transition disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          🚀 Submit Journal
+        </button>
+      </div>
     </form>
   );
 };
