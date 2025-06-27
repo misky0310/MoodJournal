@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../supabaseclient";
 import JournalForm from "../components/JournalForm";
 import PastEntries from "../components/PastEntries";
 import Visualisation from "../components/Visualisation";

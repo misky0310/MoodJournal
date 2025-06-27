@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../supabaseclient";
 import { toast,ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 

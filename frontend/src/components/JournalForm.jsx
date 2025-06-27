@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../supabaseclient";
 import { toast,ToastContainer } from "react-toastify";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";

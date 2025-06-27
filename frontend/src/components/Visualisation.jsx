@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../supabaseclient";
 import ReactECharts from "echarts-for-react";
 
 const COLORS = {
