@@ -4,7 +4,10 @@ from llm import generate_mood_insight
 from sentiment import generate_sentiment_analysis
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=[
+    "http://localhost:5173",                   # for Vite dev
+    "https://mood-journal-opal.vercel.app"     # deployed frontend
+])
 
 @app.route("/generate-insight", methods=["POST"])
 def insight():
