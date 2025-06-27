@@ -5,6 +5,9 @@ import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
 
 const JournalForm = ({ user }) => {
+
+  const backURL = import.meta.env.VITE_BACKEND_URL;
+
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -19,7 +22,7 @@ const JournalForm = ({ user }) => {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://127.0.0.1:8001/analyse", {
+      const res = await axios.post(`${backURL}/analyse`, {
         text: content,
       });
 
@@ -31,7 +34,7 @@ const JournalForm = ({ user }) => {
       const sentimentLabel = sentimentData.overall.label;
       const sentimentScores = sentimentData.overall.average_scores;
 
-      const response = await axios.post("http://127.0.0.1:8001/generate-insight", {
+      const response = await axios.post(`${backURL}/generate-insight`, {
         text: content,
       });
 
