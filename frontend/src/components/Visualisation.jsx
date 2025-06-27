@@ -138,7 +138,7 @@ const Visualisation = ({ user }) => {
     dataZoom: [
       {
         type: "slider",
-        start: 0,
+        start: lineData.length > 5 ? ((lineData.length - 5) / lineData.length) * 100 : 0,
         end: 100,
         bottom: 10,
       },
